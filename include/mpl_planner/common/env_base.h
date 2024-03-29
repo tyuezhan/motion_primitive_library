@@ -204,8 +204,9 @@ class env_base {
       }
 
       return cost;
-    } else if (state.control == Control::VEL && goal.control == Control::VEL)
+    } else if (state.control == Control::VEL && goal.control == Control::VEL) {
       return (w_ + 1) * (state.pos - goal.pos).norm();
+    }
     else
       return w_ * (state.pos - goal.pos).norm() / v_max_;
   }

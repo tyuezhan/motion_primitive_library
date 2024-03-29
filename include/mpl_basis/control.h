@@ -16,7 +16,8 @@ enum Control {
   VELxYAW = 0b10001,  ///< control input is vel and yaw
   ACCxYAW = 0b10011,  ///< control input is acc and yaw
   JRKxYAW = 0b10111,  ///< control input is jrk and yaw
-  SNPxYAW = 0b11111   ///< control input is snp and yaw
+  SNPxYAW = 0b11111,  ///< control input is snp and yaw
+  CAR = 0b100000    ///< control input for jackal robot (vel and yaw rate)
 };
 }  // namespace Control
 #endif

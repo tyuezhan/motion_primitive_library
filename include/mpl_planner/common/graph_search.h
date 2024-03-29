@@ -73,7 +73,6 @@ class GraphSearch {
       std::vector<int> succ_act_id;
 
       ENV->get_succ(currNode_ptr->coord, succ_coord, succ_cost, succ_act_id);
-
       // Process successors (satisfy dynamic constraints but might hit
       // obstacles)
       for (unsigned s = 0; s < succ_coord.size(); ++s) {

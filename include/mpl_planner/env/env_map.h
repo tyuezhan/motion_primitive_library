@@ -153,8 +153,14 @@ class env_map : public env_base<Dim> {
 
     this->expanded_nodes_.push_back(curr.pos);
     for (unsigned int i = 0; i < this->U_.size(); i++) {
+      // control is set in curr.control
+      // printf("Control is: %d\n", curr.control);
       Primitive<Dim> pr(curr, this->U_[i], this->dt_);
+      // printf("pr control is: %d\n", pr.control_);
       Waypoint<Dim> tn = pr.evaluate(this->dt_);
+
+      // printf("tn pos: %f, %f\n", tn.pos(0), tn.pos(1));
+      // printf("tn == curr: %d\n", tn == curr);
       if (tn == curr || !validate_primitive(pr, this->v_max_, this->a_max_,
                                             this->j_max_, this->yaw_max_))
         continue;
@@ -165,7 +171,6 @@ class env_map : public env_base<Dim> {
         cost += this->calculate_intrinsic_cost(pr);
         this->expanded_edges_.push_back(pr);
       }
-
       succ_cost.push_back(cost);
       action_idx.push_back(i);
     }

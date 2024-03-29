@@ -264,6 +264,11 @@ class PlannerBase {
     }
   }
 
+  void setTolYaw(decimal_t tol_yaw) {
+    ENV_->set_tol_yaw(tol_yaw);
+    if (planner_verbose_) printf("[PlannerBase] set tol_yaw: %f\n", tol_yaw);
+  }
+
   /**
    * @brief Planning thread
    * @param start start waypoint

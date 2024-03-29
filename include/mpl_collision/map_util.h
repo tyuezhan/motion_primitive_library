@@ -41,7 +41,8 @@ class MapUtil {
   }
 
   /// Check if the cell is free by index
-  bool isFree(int idx) { return map_[idx] < val_occ && map_[idx] >= val_free; }
+  // bool isFree(int idx) { return map_[idx] < val_occ && map_[idx] >= val_free; }
+  bool isFree(int idx) { return map_[idx] < val_occ; }
   /// Check if the cell is unknown by index
   bool isUnknown(int idx) { return map_[idx] == val_unknown; }
   /// Check if the cell is occupied by index

@@ -50,8 +50,9 @@ struct Waypoint {
       bool use_acc : 1;  ///< If true, acc will be used in primitive generation
       bool use_jrk : 1;  ///< If true, jrk will be used in primitive generation
       bool use_yaw : 1;  ///< If true, yaw will be used in primitive generation
+      bool use_car : 1;  ///< If true, car will be used in primitive generation
     };
-    Control::Control control : 5;  ///< Control value
+    Control::Control control : 6;  ///< Control value
   };
 
   bool enable_t{false};  ///< if enabled, use \f$t\f$ when calculating
@@ -65,6 +66,7 @@ struct Waypoint {
     if (use_acc) std::cout << "acc: " << acc.transpose() << std::endl;
     if (use_jrk) std::cout << "jrk: " << jrk.transpose() << std::endl;
     if (use_yaw) std::cout << "yaw: " << yaw << std::endl;
+    if (use_car) std::cout << "pos: " << pos.transpose() << std::endl;
     if (enable_t) std::cout << " t: " << t << std::endl;
 
     if (control == Control::VEL)
@@ -83,6 +85,8 @@ struct Waypoint {
       std::cout << "use jrk & yaw!" << std::endl;
     else if (control == Control::SNPxYAW)
       std::cout << "use snp & yaw!" << std::endl;
+    else if (control == Control::CAR)
+      std::cout << "use car!" << std::endl;
     else
       std::cout << "use null!" << std::endl;
   }
@@ -120,7 +124,14 @@ std::size_t hash_value(const Waypoint<Dim>& key) {
     int id = std::round(key.t / 0.1);
     boost::hash_combine(val, id);
   }
-
+  if (key.use_car) {
+    int id = std::round(key.pos(0) / 0.01);
+    boost::hash_combine(val, id);
+    id = std::round(key.pos(1) / 0.01);
+    boost::hash_combine(val, id);
+    id = std::round(key.yaw / 0.1);
+    boost::hash_combine(val, id);
+  }
   return val;
 }
 

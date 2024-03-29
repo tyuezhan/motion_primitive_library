@@ -10,6 +10,63 @@
 
 #include "math.h"
 
+class PrimitiveCar {
+  public:
+    PrimitiveCar() {}
+    
+    // Simplest case, control u=vel and w; p=(x, y, z, yaw)
+    PrimitiveCar(Vec4f p, decimal_t u_v, decimal_t u_w): p_(p), u_v_(u_v), u_w_(u_w) {}
+
+    // x_dot = v * cos(w t) -> J = int_0^t ||x_dot||^2 dt -> v^2 (1/2 t + 1/(4w) sin(2wt))
+    // Add x + y -> v^2 t
+    decimal_t J (decimal_t t) {
+      return u_v_ * u_v_ * t + u_w_ * u_w_ * t;
+    }
+
+    // x = x_0 + v/w [sin (theta_0 + wt) - sin(theta_0)]
+    // y = y_0 - v/w [cos (theta_0 + wt) - cos(theta_0)]
+    Vec4f p(decimal_t t) const {
+      // discretize further
+      Vec4f p_curr;
+      if (u_w_ == 0) {
+        p_curr << p_(0) + u_v_ * t * cos(p_(3)),
+                  p_(1) + u_v_ * t * sin(p_(3)),
+                  p_(2),
+                  p_(3);
+      }
+      else {
+        p_curr << p_(0) + u_v_ / u_w_ * (sin(p_(3) + u_w_ * t) - sin(p_(3))),
+                  p_(1) - u_v_ / u_w_ * (cos(p_(3) + u_w_ * t) - cos(p_(3))),
+                  p_(2),
+                  p_(3) + u_w_ * t;
+      }
+      // printf("p_curr: %f, %f, %f\n", p_curr(0), p_curr(1), p_curr(2));
+      return p_curr;
+    }
+
+    Vec4f v(decimal_t t) {
+      Vec4f v;
+      v(0) = u_v_ * cos(p_(2));
+      v(1) = u_v_ * sin(p_(2));
+      v(2) = 0;
+      v(3) = u_w_;
+      return v;
+    }
+
+    decimal_t max_vel(int k) const {
+      return u_v_;
+    }
+
+    /// Return coffecients
+    Vec6f coeff() const { return Vec2f(u_v_, u_w_); }
+    Vec4f p_zero() const { return p_; }
+  private:
+    decimal_t u_v_;
+    decimal_t u_w_;
+    Vec4f p_;
+};
+
+
 /**
  * @brief Primitive1D class
  *
@@ -219,12 +276,20 @@ class Primitive {
    */
   Primitive(const Waypoint<Dim>& p, const VecDf& u, decimal_t t)
       : t_(t), control_(p.control) {
+    // printf("[Primitive]Control is: %d\n", control_);
     if (control_ == Control::SNP) {
       for (int i = 0; i < Dim; i++) {
         Vec4f vec;
         vec << p.pos(i), p.vel(i), p.acc(i), p.jrk(i);
         prs_[i] = Primitive1D(vec, u(i));
       }
+    } else if (control_ == Control::CAR) {
+      // We use car primitive
+      // printf("Car primitive\n");
+      Vec4f vec;
+      vec << p.pos(0), p.pos(1), p.pos(2), p.yaw;
+      pr_car_= PrimitiveCar(vec, u(0), u(1));
+
     } else if (control_ == Control::JRK) {
       for (int i = 0; i < Dim; i++)
         prs_[i] = Primitive1D(Vec3f(p.pos(i), p.vel(i), p.acc(i)), u(i));
@@ -319,15 +384,31 @@ class Primitive {
    * to the first given Waypoint
    */
   Waypoint<Dim> evaluate(decimal_t t) const {
-    Waypoint<Dim> p(control_);
-    for (int k = 0; k < Dim; k++) {
-      p.pos(k) = prs_[k].p(t);
-      p.vel(k) = prs_[k].v(t);
-      p.acc(k) = prs_[k].a(t);
-      p.jrk(k) = prs_[k].j(t);
-      if (p.use_yaw) p.yaw = normalize_angle(pr_yaw_.p(t));
+    // std::cout << "calling evalute function, control is: " << control_ << std::endl;
+    if (control_ == Control::CAR) {
+      Waypoint<Dim> p(control_);
+      // std::cout << "Evaluating car primitive\n" << std::endl;
+      Vec4f p_curr = pr_car_.p(t);
+      p.pos(0) = p_curr(0);
+      p.pos(1) = p_curr(1);
+      p.pos(2) = p_curr(2);
+      p.yaw = p_curr(3);
+      // printf("p: %f, %f, %f\n", p.pos(0), p.pos(1), p.yaw);
+      std::cout.flush();
+      return p;
+    } 
+    else {
+      Waypoint<Dim> p(control_);
+      for (int k = 0; k < Dim; k++) {
+        p.pos(k) = prs_[k].p(t);
+        p.vel(k) = prs_[k].v(t);
+        p.acc(k) = prs_[k].a(t);
+        p.jrk(k) = prs_[k].j(t);
+        if (p.use_yaw) p.yaw = normalize_angle(pr_yaw_.p(t));
+      }
+      return p;
     }
-    return p;
+
   }
 
   /**
@@ -345,6 +426,9 @@ class Primitive {
   Primitive1D pr(int k) const { return prs_[k]; }
   /// Get the yaw primitive
   Primitive1D pr_yaw() const { return pr_yaw_; }
+
+  PrimitiveCar pr_car() const { return pr_car_; }
+
 
   /**
    * @brief Return max velocity along one axis
@@ -428,6 +512,9 @@ class Primitive {
   std::array<Primitive1D, Dim> prs_;
   /// Primitive for yaw
   Primitive1D pr_yaw_;
+
+  // Primitive for non-holonomic car
+  PrimitiveCar pr_car_;
 };
 
 /// Primitive for 2D
@@ -471,6 +558,7 @@ bool validate_primitive(const Primitive<Dim>& pr, decimal_t mv = 0,
            validate_xxx(pr, ma, Control::ACC) &&
            validate_xxx(pr, mj, Control::JRK);
   else
+    // In car case, we return true directly  
     return true;
 }
 /**
