@@ -57,8 +57,9 @@ class PrimitiveCar {
       return u_v_;
     }
 
+    
     /// Return coffecients
-    Vec6f coeff() const { return Vec2f(u_v_, u_w_); }
+    Vec2f coeff() const { return Vec2f(u_v_, u_w_); }
     Vec4f p_zero() const { return p_; }
   private:
     decimal_t u_v_;
@@ -375,6 +376,15 @@ class Primitive {
       : t_(t), control_(control) {
     for (int i = 0; i < Dim; i++) prs_[i] = Primitive1D(cs[i]);
     if (cs.size() == Dim + 1) pr_yaw_ = Primitive1D(cs[Dim]);
+  }
+
+  Primitive(const decimal_t p_x, const decimal_t p_y, const decimal_t p_z, 
+            const decimal_t yaw, const decimal_t u_v, const decimal_t u_w, 
+            const decimal_t t)
+      : t_(t), control_(Control::CAR) {
+    Vec4f p;
+    p << p_x, p_y, p_z, yaw;
+    pr_car_ = PrimitiveCar(p, u_v, u_w);
   }
 
   /**
