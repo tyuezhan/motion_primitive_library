@@ -167,6 +167,7 @@ class env_map : public env_base<Dim> {
       tn.t = curr.t + this->dt_;
       succ.push_back(tn);
       decimal_t cost = curr.pos == tn.pos ? 0 : traverse_primitive(pr);
+      // std::cout << "traverse primitive cost: " << cost << "\n";
       if (!std::isinf(cost)) {
         cost += this->calculate_intrinsic_cost(pr);
         this->expanded_edges_.push_back(pr);

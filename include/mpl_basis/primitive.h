@@ -19,7 +19,7 @@ class PrimitiveCar {
 
     // x_dot = v * cos(w t) -> J = int_0^t ||x_dot||^2 dt -> v^2 (1/2 t + 1/(4w) sin(2wt))
     // Add x + y -> v^2 t
-    decimal_t J (decimal_t t) {
+    decimal_t J (decimal_t t) const {
       return u_v_ * u_v_ * t + u_w_ * u_w_ * t;
     }
 
@@ -495,6 +495,10 @@ class Primitive {
    * \f$J(i) = \int_0^t |p^{i}(t)|^2dt\f$
    */
   decimal_t J(const Control::Control& control) const {
+    if (control == Control::CAR) {
+      decimal_t j = pr_car_.J(t_);
+      return j;
+    }
     decimal_t j = 0;
     for (const auto& pr : prs_) j += pr.J(t_, control);
     return j;
