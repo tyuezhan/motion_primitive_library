@@ -7,6 +7,8 @@
 #define MPL_ENV_BASE_H
 
 #include <mpl_basis/trajectory.h>
+// #include <chrono>
+#include <ros/ros.h>
 
 namespace MPL {
 
@@ -292,6 +294,26 @@ class env_base {
   /// Set max time
   void set_t_max(int t) { t_max_ = t; }
 
+  /// Set plan max time
+  void set_plan_t_max(decimal_t t) { plan_t_max_ = t; }
+
+  /// Set start time of planning
+  // void set_plan_start_time() { plan_start_time_ = std::chrono::high_resolution_clock::now(); }
+  void set_plan_start_time() { plan_start_time_ = ros::Time::now(); }
+
+  /// Check if the plan time is out
+  bool plan_timeout() {
+    // std::chrono::high_resolution_clock::time_point t_now = std::chrono::high_resolution_clock::now();
+    // std::chrono::milliseconds duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t_now - plan_start_time_);
+    // decimal_t duration_s = duration_ms.count() / 1000.0;
+    // printf("elapsed_time: %f\n", duration_s);
+    // Using ROS Time, chrono time jumps
+    ros::Time t_now = ros::Time::now();
+    decimal_t duration_s = (t_now - plan_start_time_).toSec();
+    if (duration_s >= plan_t_max_) printf("elapsed_time: %f\n", duration_s);
+    return duration_s >= plan_t_max_;
+  }
+
   /// Set goal state
   bool set_goal(const Waypoint<Dim>& state) {
     if (prior_traj_.empty()) goal_node_ = state;
@@ -389,6 +411,11 @@ class env_base {
   decimal_t yaw_max_{-1.0};
   /// max time
   decimal_t t_max_{std::numeric_limits<decimal_t>::infinity()};
+  /// max plan time
+  decimal_t plan_t_max_{std::numeric_limits<decimal_t>::infinity()};
+  /// start time of planning
+  // std::chrono::high_resolution_clock::time_point plan_start_time_;
+  ros::Time plan_start_time_;
   /// duration of primitive
   decimal_t dt_{1.0};
   /// Array of constant control input

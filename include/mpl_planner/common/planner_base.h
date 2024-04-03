@@ -205,6 +205,11 @@ class PlannerBase {
     if (planner_verbose_) printf("[PlannerBase] set max time: %f\n", t);
   }
 
+  void setPlanTmax(decimal_t t) {
+    ENV_->set_plan_t_max(t);
+    if (planner_verbose_) printf("[PlannerBase] set plan max time: %f\n", t);
+  }
+
   /// Set dt for each primitive
   void setDt(decimal_t dt) {
     ENV_->set_dt(dt);

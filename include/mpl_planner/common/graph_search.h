@@ -40,6 +40,8 @@ class GraphSearch {
                   const std::shared_ptr<env_base<Dim>> &ENV,
                   std::shared_ptr<StateSpace<Dim, Coord>> &ss_ptr,
                   Trajectory<Dim> &traj, int max_expand = -1) {
+    // set plan start time
+    ENV->set_plan_start_time();
     // Check if done
     if (ENV->is_goal(start_coord)) return 0;
 
@@ -144,6 +146,12 @@ class GraphSearch {
       // If goal reached, abort!
       if (ENV->is_goal(currNode_ptr->coord)) break;
 
+      // If max search time reached, abort!
+      if (ENV->plan_timeout()) {
+        printf(ANSI_COLOR_RED "Reach Max Search Time!!!!!!\n\n" ANSI_COLOR_RESET);
+        return std::numeric_limits<decimal_t>::infinity();
+      }
+
       // If maximum expansion reached, abort!
       if (max_expand > 0 && expand_iteration >= max_expand) {
         printf(ANSI_COLOR_RED
@@ -194,6 +202,8 @@ class GraphSearch {
                     const std::shared_ptr<env_base<Dim>> &ENV,
                     std::shared_ptr<StateSpace<Dim, Coord>> &ss_ptr,
                     Trajectory<Dim> &traj, int max_expand = -1) {
+    // set plan start time
+    ENV->set_plan_start_time();
     // Check if done
     if (ENV->is_goal(start_coord)) {
       if (verbose_)
@@ -312,6 +322,12 @@ class GraphSearch {
 
       // If goal reached, terminate!
       if (ENV->is_goal(currNode_ptr->coord)) goalNode_ptr = currNode_ptr;
+
+      // If max search time reached, abort!
+      if (ENV->plan_timeout()) {
+        printf(ANSI_COLOR_RED "Reach Max Search Time!!!!!!\n\n" ANSI_COLOR_RESET);
+        return std::numeric_limits<decimal_t>::infinity();
+      }
 
       // If maximum expansion reached, abort!
       if (max_expand > 0 && expand_iteration >= max_expand) {

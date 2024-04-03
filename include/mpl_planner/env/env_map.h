@@ -23,6 +23,7 @@ class env_map : public env_base<Dim> {
 
   /// Check if state hit the goal region, use L-1 norm
   bool is_goal(const Waypoint<Dim> &state) const {
+    // if (state.t >= this->t_max_) return true;
     bool goaled =
         (state.pos - this->goal_node_.pos).template lpNorm<Eigen::Infinity>() <=
         this->tol_pos_;
@@ -35,12 +36,12 @@ class env_map : public env_base<Dim> {
                    .template lpNorm<Eigen::Infinity>() <= this->tol_acc_;
     if (goaled && this->tol_yaw_ >= 0)
       goaled = std::abs(state.yaw - this->goal_node_.yaw) <= this->tol_yaw_;
-    if (goaled) {
-      auto pns = map_util_->rayTrace(state.pos, this->goal_node_.pos);
-      for (const auto &it : pns) {
-        if (map_util_->isOccupied(it)) return false;
-      }
-    }
+    // if (goaled) {
+    //   auto pns = map_util_->rayTrace(state.pos, this->goal_node_.pos);
+    //   for (const auto &it : pns) {
+    //     if (map_util_->isOccupied(it)) return false;
+    //   }
+    // }
     return goaled;
   }
 
@@ -276,6 +277,7 @@ class env_map : public env_base<Dim> {
     printf("+            tol_vel: %.2f               +\n", this->tol_vel_);
     printf("+            tol_acc: %.2f               +\n", this->tol_acc_);
     printf("+            tol_yaw: %.2f               +\n", this->tol_yaw_);
+    printf("+         plan_t_max: %.2f          +\n", this->plan_t_max_);
     printf("+heur_ignore_dynamics: %d                 +\n",
            this->heur_ignore_dynamics_);
     if (!potential_map_.empty())
