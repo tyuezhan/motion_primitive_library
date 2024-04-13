@@ -378,6 +378,7 @@ class Primitive {
     if (cs.size() == Dim + 1) pr_yaw_ = Primitive1D(cs[Dim]);
   }
 
+  // This is contructor for car primitive ONLY!
   Primitive(const decimal_t p_x, const decimal_t p_y, const decimal_t p_z, 
             const decimal_t yaw, const decimal_t u_v, const decimal_t u_w, 
             const decimal_t t)
@@ -404,7 +405,7 @@ class Primitive {
       p.pos(2) = p_curr(2);
       p.yaw = p_curr(3);
       // printf("p: %f, %f, %f\n", p.pos(0), p.pos(1), p.yaw);
-      std::cout.flush();
+      // std::cout.flush();
       return p;
     } 
     else {

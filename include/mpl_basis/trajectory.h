@@ -72,6 +72,10 @@ class Trajectory {
     for (size_t id = 0; id < segs.size(); id++) {
       if ((tau >= taus[id] && tau < taus[id + 1]) || id == segs.size() - 1) {
         tau -= taus[id];
+        if (segs[id].control() == Control::CAR) {
+          auto p = segs[id].evaluate(tau);
+          return p;
+        }
         Waypoint<Dim> p(segs[id].control());
         for (int j = 0; j < Dim; j++) {
           const auto pr = segs[id].pr(j);
@@ -113,6 +117,13 @@ class Trajectory {
     for (size_t id = 0; id < segs.size(); id++) {
       if (tau >= taus[id] && tau <= taus[id + 1]) {
         tau -= taus[id];
+        if (segs[id].control() == Control::CAR) {
+          auto wp = segs[id].evaluate(tau);
+          p.pos = wp.pos;
+          p.yaw = wp.yaw;
+          p.t = time;
+          return true;
+        }
         for (int j = 0; j < Dim; j++) {
           const auto pr = segs[id].pr(j);
           p.pos(j) = pr.p(tau);

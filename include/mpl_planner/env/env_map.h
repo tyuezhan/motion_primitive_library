@@ -25,15 +25,15 @@ class env_map : public env_base<Dim> {
   bool is_goal(const Waypoint<Dim> &state) const {
     // if (state.t >= this->t_max_) return true;
     bool goaled =
-        (state.pos - this->goal_node_.pos).template lpNorm<Eigen::Infinity>() <=
+        (state.pos - this->goal_node_.pos).template lpNorm<2>() <=
         this->tol_pos_;
 
     if (goaled && this->tol_vel_ >= 0)
       goaled = (state.vel - this->goal_node_.vel)
-                   .template lpNorm<Eigen::Infinity>() <= this->tol_vel_;
+                   .template lpNorm<2>() <= this->tol_vel_;
     if (goaled && this->tol_acc_ >= 0)
       goaled = (state.acc - this->goal_node_.acc)
-                   .template lpNorm<Eigen::Infinity>() <= this->tol_acc_;
+                   .template lpNorm<2>() <= this->tol_acc_;
     if (goaled && this->tol_yaw_ >= 0)
       goaled = std::abs(state.yaw - this->goal_node_.yaw) <= this->tol_yaw_;
     // if (goaled) {
