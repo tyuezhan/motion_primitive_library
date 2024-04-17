@@ -65,6 +65,11 @@ add_executable(test_distance_map_planner_2d_iterative test/test_distance_map_pla
 target_link_libraries(test_distance_map_planner_2d_iterative map_planner ${YAMLCPP_LIBRARIES} ${OpenCV_LIBS} ${catkin_LIBRARIES})
 add_test(test_distance_map_planner_2d_iterative test_distance_map_planner_2d_iterative ${CMAKE_SOURCE_DIR}/data/corridor.yaml)
 
+add_executable(view_utils_test test/view_utils_test.cpp)
+# set_target_properties(view_utils_test PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(view_utils_test ${catkin_LIBRARIES})
+# add_dependencies(view_utils_test  ${catkin_EXPORTED_TARGETS})
+
 
 install(FILES "${PROJECT_NAME}Config.cmake" "${PROJECT_NAME}ConfigVersion.cmake"
   DESTINATION "share/${PROJECT_NAME}/cmake")

@@ -279,6 +279,15 @@ class env_base {
   /// set weight for cost in yaw, usually no need to change
   void set_wyaw(decimal_t wyaw) { wyaw_ = wyaw; }
 
+  /// Set max ray length
+  void set_max_ray_len(decimal_t len) { max_ray_len_ = len; }
+
+  /// Set horizontal field of view
+  void set_h_fov(decimal_t fov) { h_fov_ = fov; }
+
+  /// Set weight for view cost
+  void set_w_view(decimal_t w) { w_view_ = w; }
+
   /// set weight for cost in time, usually no need to change
   virtual void set_potential_weight(decimal_t w) {}
 
@@ -418,6 +427,12 @@ class env_base {
   ros::Time plan_start_time_;
   /// duration of primitive
   decimal_t dt_{1.0};
+  /// Max ray length for view cost
+  decimal_t max_ray_len_{5.0};
+  /// Horizontal field of view for view cost
+  decimal_t h_fov_{M_PI / 2};
+  /// Weight for view cost
+  decimal_t w_view_{1.0};
   /// Array of constant control input
   vec_E<VecDf> U_;
   /// Goal node

@@ -45,6 +45,13 @@ class MapPlanner : public PlannerBase<Dim, Waypoint<Dim>> {
   /// Set potential weight
   void setPotentialWeight(decimal_t w);
 
+  /// Set max ray length
+  void setMaxRayLen(decimal_t len);
+  /// Set horizontal field of view
+  void setHFov(decimal_t fov);
+  /// Set weight for view cost
+  void setWView(decimal_t w);
+
   /// Get the potential cloud, works for 2D and 3D
   vec_Vec3f getPotentialCloud(decimal_t h_max = 1.0);
   /// Get the gradient cloud, works for 2D

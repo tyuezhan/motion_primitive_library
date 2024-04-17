@@ -95,6 +95,21 @@ void MapPlanner<Dim>::setSearchRegion(const vec_Vecf<Dim>& path, bool dense) {
 }
 
 template <int Dim>
+void MapPlanner<Dim>::setMaxRayLen(decimal_t len) {
+  this->ENV_->set_max_ray_len(len);
+}
+
+template <int Dim>
+void MapPlanner<Dim>::setHFov(decimal_t fov) {
+  this->ENV_->set_h_fov(fov);
+}
+
+template <int Dim>
+void MapPlanner<Dim>::setWView(decimal_t w) {
+  this->ENV_->set_w_view(w);
+}
+
+template <int Dim>
 vec_Vecf<Dim> MapPlanner<Dim>::getSearchRegion() const {
   const auto in_region = this->ENV_->get_search_region();
   vec_Vecf<Dim> pts;

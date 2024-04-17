@@ -11,6 +11,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include <mpl_planner/common/view_utils.h>
+
 namespace MPL {
 /**
  * @brief Voxel map environment
@@ -127,6 +129,17 @@ class env_map : public env_base<Dim> {
           c += this->wyaw_ * v_value * dt;
         }
       }
+    }
+
+    // Add view cost for car primitives
+    if (pr.control_ == Control::CAR) {
+      const auto p0 = pr.evaluate(0);
+      const auto pt = pr.evaluate(pr.t());
+      Eigen::Vector3d pos1, pos2;
+      pos1 << p0.pos(0), p0.pos(1), 0;
+      pos2 << pt.pos(0), pt.pos(1), 0;
+      c += this->w_view_ * getViewCorrelation(pos1, p0.yaw, pos2, pt.yaw,
+                                        this->h_fov_, this->max_ray_len_);
     }
 
     return c;
