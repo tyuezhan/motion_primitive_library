@@ -131,7 +131,8 @@ class env_map : public env_base<Dim> {
       }
     }
 
-    // Add view cost for car primitives
+    // Add view cost for car primitives, 
+    // c should be 0 before adding view cost
     if (pr.control_ == Control::CAR) {
       const auto p0 = pr.evaluate(0);
       const auto pt = pr.evaluate(pr.t());
