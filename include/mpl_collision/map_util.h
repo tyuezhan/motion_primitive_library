@@ -227,6 +227,8 @@ class MapUtil {
     for (n(0) = 0; n(0) < dim_(0); n(0)++) {
       for (n(1) = 0; n(1) < dim_(1); n(1)++) {
         for (n(2) = 0; n(2) < dim_(2); n(2)++) {
+          Vec3f pos = intToFloat(n);
+          if (pos(2) <= 0) continue;
           if (isOccupied(getIndex(n))) {
             for (const auto &it : dilate_neighbor) {
               if (!isOutside(n + it)) map[getIndex(n + it)] = val_occ;
