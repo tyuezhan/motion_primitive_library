@@ -95,7 +95,7 @@ class env_map : public env_base<Dim> {
     for (int i = 0; i < Dim; i++) {
       if (pr.max_vel(i) > max_v) max_v = pr.max_vel(i);
     }
-    int n = std::max(5, (int)std::ceil(max_v * pr.t() / map_util_->getRes()));
+    int n = 2 * std::max(5, (int)std::ceil(max_v * pr.t() / map_util_->getRes()));
     decimal_t c = 0;
 
     decimal_t dt = pr.t() / n;
