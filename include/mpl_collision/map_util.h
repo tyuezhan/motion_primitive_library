@@ -258,6 +258,14 @@ class MapUtil {
     map_ = map;
   }
 
+  /// set cells to be free
+  void setFree(const vec_Veci<Dim> &pns) {
+    for (const auto &pn : pns) {
+      if (isOutside(pn)) continue;
+      map_[getIndex(pn)] = val_free;
+    }
+  }
+
   /// Free unknown voxels
   void freeUnknown() {
     Veci<Dim> n;
