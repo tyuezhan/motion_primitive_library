@@ -62,12 +62,21 @@ class GraphSearch {
     }
 
     int expand_iteration = 0;
+    double best_dist = std::numeric_limits<decimal_t>::infinity();
+    auto best_node_ptr = currNode_ptr;
     while (true) {
       expand_iteration++;
       // get element with smallest cost
       currNode_ptr = ss_ptr->pq_.top().second;
       ss_ptr->pq_.pop();
       currNode_ptr->iterationclosed = true;  // Add to closed list
+
+      // keep track of current closest node
+      double dist_2_goal = ENV->dist_to_goal(currNode_ptr->coord);
+      if (dist_2_goal < best_dist) {
+        best_dist = dist_2_goal;
+        best_node_ptr = currNode_ptr;
+      }
 
       // Get successors
       vec_E<Coord> succ_coord;
@@ -149,7 +158,9 @@ class GraphSearch {
       // If max search time reached, abort!
       if (ENV->plan_timeout()) {
         printf(ANSI_COLOR_RED "Reach Max Search Time!!!!!!\n\n" ANSI_COLOR_RESET);
-        return std::numeric_limits<decimal_t>::infinity();
+        // Use the best node to generate traj.
+        recoverTraj(best_node_ptr, ss_ptr, ENV, start_coord, traj);
+        return best_node_ptr->g;
       }
 
       // If maximum expansion reached, abort!

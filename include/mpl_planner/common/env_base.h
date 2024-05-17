@@ -40,6 +40,12 @@ class env_base {
     return goaled;
   }
 
+  /// distance to goal
+  decimal_t dist_to_goal(const Waypoint<Dim> &state) const {
+    double dist = (state.pos - goal_node_.pos).template lpNorm<2>();
+    return dist;
+  }
+
   /**
    * @brief Heuristic function
    * @param Waypoint current state coord

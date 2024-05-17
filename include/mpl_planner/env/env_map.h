@@ -47,6 +47,12 @@ class env_map : public env_base<Dim> {
     return goaled;
   }
 
+  // compute the distance to goal
+  decimal_t dist_to_goal(const Waypoint<Dim> &state) const {
+    double dist = (state.pos - this->goal_node_.pos).template lpNorm<2>();
+    return dist;
+  }
+
   /// Check if a point is in free space
   bool is_free(const Vecf<Dim> &pt) const {
     const auto pn = map_util_->floatToInt(pt);
