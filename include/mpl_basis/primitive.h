@@ -13,7 +13,7 @@
 class PrimitiveCar {
   public:
     PrimitiveCar() {}
-    
+    ~PrimitiveCar() {}
     // Simplest case, control u=vel and w; p=(x, y, z, yaw)
     PrimitiveCar(Vec4f p, decimal_t u_v, decimal_t u_w): p_(p), u_v_(u_v), u_w_(u_w) {}
 
@@ -46,8 +46,8 @@ class PrimitiveCar {
 
     Vec4f v(decimal_t t) const {
       Vec4f v;
-      v(0) = u_v_ * cos(p_(2));
-      v(1) = u_v_ * sin(p_(2));
+      v(0) = u_v_ * cos(p_(3));
+      v(1) = u_v_ * sin(p_(3));
       v(2) = 0;
       v(3) = u_w_;
       return v;
@@ -404,6 +404,11 @@ class Primitive {
       p.pos(1) = p_curr(1);
       p.pos(2) = p_curr(2);
       p.yaw = p_curr(3);
+      Vec4f v_curr = pr_car_.v(t);
+      p.vel(0) = v_curr(0);
+      p.vel(1) = v_curr(1);
+      p.vel(2) = v_curr(2);
+      p.yaw_dot = v_curr(3);
       // printf("p: %f, %f, %f\n", p.pos(0), p.pos(1), p.yaw);
       // std::cout.flush();
       return p;

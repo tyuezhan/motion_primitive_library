@@ -35,6 +35,7 @@ struct Waypoint {
   Vecf<Dim> jrk{Vecf<Dim>::Zero()};  ///< jerk in \f$R^{n}\f$
   decimal_t yaw{0};                  ///< yaw
   decimal_t t{0};  ///< time when reaching this waypoint in graph search
+  decimal_t yaw_dot{0};  ///< yaw rate
 
   /**
    * @brief Control flag

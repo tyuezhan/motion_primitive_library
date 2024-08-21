@@ -121,6 +121,8 @@ class Trajectory {
           auto wp = segs[id].evaluate(tau);
           p.pos = wp.pos;
           p.yaw = wp.yaw;
+          p.vel = wp.vel;
+          p.yaw_dot = wp.yaw_dot;
           p.t = time;
           return true;
         }
