@@ -46,8 +46,9 @@ class PrimitiveCar {
 
     Vec4f v(decimal_t t) const {
       Vec4f v;
-      v(0) = u_v_ * cos(p_(3));
-      v(1) = u_v_ * sin(p_(3));
+      double yaw = p_(3) + u_w_ * t;
+      v(0) = u_v_ * cos(yaw);
+      v(1) = u_v_ * sin(yaw);
       v(2) = 0;
       v(3) = u_w_;
       return v;
